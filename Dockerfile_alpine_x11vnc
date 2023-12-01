@@ -1,0 +1,18 @@
+# FROM ubuntu:latest
+FROM alpine:latest
+RUN apk update && apk add  bash x11vnc xvfb
+
+RUN echo "#!/bin/bash" > ~/.xinitrc && chmod +x ~/.xinitrc
+RUN echo 'export DISPLAY=":0.0"' >> .xinitrc
+RUN echo "xhost +" >> .xinitrc
+# RUN echo "exec bash" >> .xinitrc
+
+# RUN echo "exec bash" > /root/.xinitrc && chmod +x /root/.xinitrc
+RUN mkdir /root/.Xauthority
+RUN echo "#!/bin/bash" > /root/.xinitrc && chmod +x /root/.xinitrc
+RUN echo 'export DISPLAY=":0.0"' >> /root/.xinitrc
+RUN echo "xhost +" >> /root/.xinitrc
+CMD ["x11vnc", "-create", "-noxrecord", "-noxfixes", "-noxdamage", "-forever", "-passwd", "trustno1"]
+
+# docker build  -t x11vnc-alpine-1 -f ./Dockerfile_alpine_x11vnc "."
+# docker run -p 5900:5900 --rm x11vnc-alpine-1
