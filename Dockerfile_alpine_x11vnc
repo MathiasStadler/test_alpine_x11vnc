@@ -1,6 +1,6 @@
 # FROM ubuntu:latest
 FROM alpine:latest
-RUN apk update && apk add  bash x11vnc xvfb
+RUN apk update && apk add  bash x11vnc xvfb xrdp
 
 RUN echo "#!/bin/bash" > ~/.xinitrc && chmod +x ~/.xinitrc
 RUN echo 'export DISPLAY=":0.0"' >> .xinitrc
