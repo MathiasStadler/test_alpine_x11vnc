@@ -14,5 +14,11 @@ RUN echo 'export DISPLAY=":0.0"' >> /root/.xinitrc
 RUN echo "xhost +" >> /root/.xinitrc
 CMD ["x11vnc", "-create", "-noxrecord", "-noxfixes", "-noxdamage", "-forever", "-passwd", "trustno1"]
 
+#Set envirnmental variable for display	
+ENV DISPLAY :20
+
+#Expose port 5920 to view display using VNC Viewer
+EXPOSE 5920
+
 # docker build  -t x11vnc-alpine-1 -f ./Dockerfile_alpine_x11vnc "."
 # docker run -p 5900:5900 --rm x11vnc-alpine-1
