@@ -2,17 +2,30 @@
 FROM alpine:latest
 RUN apk update && apk add  bash x11vnc xvfb xrdp
 
-RUN echo "#!/bin/bash" > ~/.xinitrc && chmod +x ~/.xinitrc
-RUN echo 'export DISPLAY=":0.0"' >> .xinitrc
-RUN echo "xhost +" >> .xinitrc
+# RUN echo "#!/bin/bash" > ~/.xinitrc && chmod +x ~/.xinitrc
+# RUN echo 'export DISPLAY=":0.0"' >> .xinitrc
+# RUN echo "xhost +" >> .xinitrc
 # RUN echo "exec bash" >> .xinitrc
 
 # RUN echo "exec bash" > /root/.xinitrc && chmod +x /root/.xinitrc
-RUN mkdir /root/.Xauthority
-RUN echo "#!/bin/bash" > /root/.xinitrc && chmod +x /root/.xinitrc
-RUN echo 'export DISPLAY=":0.0"' >> /root/.xinitrc
-RUN echo "xhost +" >> /root/.xinitrc
-CMD ["x11vnc", "-create", "-noxrecord", "-noxfixes", "-noxdamage", "-forever", "-passwd", "trustno1"]
+# RUN mkdir /root/.Xauthority
+# RUN echo "#!/bin/bash" > /root/.xinitrc && chmod +x /root/.xinitrc
+# RUN echo 'export DISPLAY=":0.0"' >> /root/.xinitrc
+# RUN echo "xhost +" >> /root/.xinitrc
+# CMD ["x11vnc", "-create", "-noxrecord", "-noxfixes", "-noxdamage", "-forever", "-passwd", "trustno1"]
+
+# FROM HERE
+# https://qxf2.com/blog/view-docker-container-display-using-vnc-viewer/
+
+#Set working directory
+WORKDIR /workdir
+
+# Add entrypoint.sh and other available files to image
+ADD entrypoint.sh .
+
+#Provide read, write and execute permissions for entrypoint.sh and also take care of '\r' error which raised when someone uses notepad or note++ for editing in Windows.
+RUN chmod 755 entrypoint.sh \
+	&& sed -i 's/\r$//' entrypoint.sh
 
 #Set envirnmental variable for display	
 ENV DISPLAY :20
@@ -20,5 +33,12 @@ ENV DISPLAY :20
 #Expose port 5920 to view display using VNC Viewer
 EXPOSE 5920
 
+#Execute entrypoint.sh at start of container
+ENTRYPOINT ["./entrypoint.sh"]
+
+
 # docker build  -t x11vnc-alpine-1 -f ./Dockerfile_alpine_x11vnc "."
 # docker run -p 5900:5900 --rm x11vnc-alpine-1
+
+## use TigerVNC 1.12
+# vncviewer 127.0.0.1:5920
